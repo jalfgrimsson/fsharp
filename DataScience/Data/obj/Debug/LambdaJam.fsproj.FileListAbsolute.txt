@@ -1,0 +1,7 @@
+\\psf\Home\Desktop\DataScience\Data\bin\Debug\LambdaJam.XML
+\\psf\Home\Desktop\DataScience\Data\bin\Debug\LambdaJam.exe
+\\psf\Home\Desktop\DataScience\Data\bin\Debug\LambdaJam.pdb
+\\psf\Home\Desktop\DataScience\Data\bin\Debug\FSharp.Core.dll
+\\psf\Home\Desktop\DataScience\Data\bin\Debug\FSharp.Core.xml
+\\psf\Home\Desktop\DataScience\Data\obj\Debug\LambdaJam.exe
+\\psf\Home\Desktop\DataScience\Data\obj\Debug\LambdaJam.pdb

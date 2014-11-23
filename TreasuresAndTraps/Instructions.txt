@@ -1,0 +1,117 @@
+The overall goal is to implement a brain for a game creature. The creature is 
+located in a maze of traps and treasures, and has to perpetually move, either 
+left, right or straight. No rest for the wicked!
+
+We'll start by building something super simple, and progressively crank up the 
+volume, using ideas from reinforcement learning to equip the creature with some 
+brains, and making the game harder as we go as well.
+
+
+Chapter 0: brainless & adventurous
++++++++++++++++++++++++++++++++++++++++++++++++++
+
+The folder Chapter-0 contrains a stub for the game, where the core logic and
+rendering is already implemented. I am not a game designer, so I went for a 
+retro aesthetic here (i.e. a good old Console App).
+
+As a warmup, to get acquainted with the game, you will implemement:
+- Brains.randomDecide: our brainless creature should randomly moves left, 
+straight or right. 
+- Domain.computeGain: if the creature position on the board is on a Treasure, 
+it gains +100, if it's a trap, -100, and otherwise, nothing happens.
+
+
+Chapter 1: brains! braiiinnnns!
++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Now that we have a bold and brainless creature, let's give it a basic brain.
+
+Check out how the game loop in Program.fs has changed. Now the state includes 
+the game state, and a brain. Each turn, the Creature makes a decision, based on 
+what it sees (its State) and its Brain, and records the result of that decision 
+(and the next state) as a new "Experience". That experience then is used for 
+the brain to learn: the State and the Decision define a Stategy, and the 
+Reward that resulted from that Strategy is used to update the Strategy 
+evaluation.
+
+Brains.fs now contains a couple of types that model State, Strategy and 
+Experience. What is missing is the decision making part, and the learning part.
+
+Your mission: implement
+- Brains.decide: use the creature brain to make a decision, based on past 
+experience. Look up the strategies that have been evaluated for the current
+state, and pick the one with highest value. If the state has never been seen
+before, pick a random decision.
+- Brains.learn: update the brain, by adding or updating the Strategy that has 
+just been followed, with a value of (1-alpha) x current value + alpha x gain.
+
+
+Chapter 2: mini brain
++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Nothing to implement here; this is just Chapter 1, implemented.
+
+Your mission: look at the Creature, and think about ways it could be made 
+smarter.
+
+
+// Interlude
+
+What problems do you see?
+- large state: can we reduce it?
+- creature gets stuck in dumb behavior (not terrible, but sub-optimal)
+(see what happens when order = left, straight, right)
+- creature is short-sighted
+
+
+Chapter 3: no pain, no gain?
++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Our Brave New World is now full of tiles: whenever a tile is eaten, it is
+immediately replaced by a random tile. Chapter 3 contains an implementation of 
+learning similar to what we had in chapter 2, with a couple minor differences.
+
+To avoid getting stuck in "silly strategies", at every turn, the Creature, 
+with a certain probability epsilon, will ignore what it has learnt so far, and 
+take a random decision.
+
+Your mission:
+- edit Brains.decide, so that the Creature takes a random decision with a 
+certain probability.
+
+
+Chapter 4: a brain in a jar
++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Our new strategy seems better, but... is it? As Demming said, "in God we trust. 
+All others, bring data."  
+
+Your mission: 
+- add a script file "headless.fsx", simulating the Creature over a 
+long stretch (say, 100,000 moves), without any UI update, to measure how well 
+the strategy actually does.
+
+
+Chapter 5: a creature with a vision
++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Great minds think a couple of steps further in the future than most of us. We 
+would like our Creature to be a great mind, so we will try to do that. Instead 
+of just blindly taking the decision that gives us the best immediate Reward, 
+we'll also take into account where we end up as a result. Our creature will now 
+take a long view, and accept moderate gains right now, if as a result it ends 
+up in a better situation. 
+
+Your mission: 
+- implement Brains.nextValue 
+- fix Brains.learn: 
+	V(strategy) =
+		(1. - alpha) * V(strategy) 
+		+ alpha * (gain + gamma * V(best strategy in next state))
+- measure whether "taking a long view" pays off.
+
+
+Chapter 6: 
++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Nothing to do here; just one possible implementation!

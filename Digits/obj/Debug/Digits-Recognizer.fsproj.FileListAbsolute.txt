@@ -1,0 +1,7 @@
+\\psf\Home\Desktop\Digits\bin\Debug\Stockholm_Morning.XML
+\\psf\Home\Desktop\Digits\bin\Debug\Stockholm_Morning.dll
+\\psf\Home\Desktop\Digits\bin\Debug\Stockholm_Morning.pdb
+\\psf\Home\Desktop\Digits\bin\Debug\FSharp.Core.dll
+\\psf\Home\Desktop\Digits\bin\Debug\FSharp.Core.xml
+\\psf\Home\Desktop\Digits\obj\Debug\Stockholm_Morning.dll
+\\psf\Home\Desktop\Digits\obj\Debug\Stockholm_Morning.pdb
