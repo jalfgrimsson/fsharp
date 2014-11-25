@@ -44,12 +44,29 @@ Decision from the latest Experience recorded,
 *)
 
     let alpha = 0.2 // learning rate
-    
+
+    let noupdateFunction value =
+        value
+    let updateFunction value reward =
+        (1.0 - alpha) * value + alpha * reward  
+
+    let updateIfStateMatches (strategy:Strategy,value:float) (state:State) (reward:float) =
+        match strategy.State with
+            | state -> (strategy, (updateFunction value reward))
+            | _ -> (strategy, (noupdateFunction value))
+
     let learn (brain:Brain) (exp:Experience) =
-        brain
+        let strategiesForState = brain |> Map.toArray |> Array.filter(fun (strategy,value) -> strategy.State = exp.State)
+        match strategiesForState |> Array.isEmpty with
+            | true ->
+                let strategy:Strategy = { State = exp.State, Action = exp.Action }
+                Map.add (strategy, exp.Reward)
+            | false ->
+                brain |> Map.toArray |> Array.map(fun (strategy,value) -> updateIfStateMatches (strategy,value) exp.State exp.Reward) |> Map.ofArray
+        //strategiesForState |> Array.map (fun (strategy,value) -> (strategy,(updateFunction value exp.Reward))
 
 (*
-TODO: implement decide, so that the creature
+TODO: implement decide, so that the creature 
 uses its brain to make a decision, based on its
 current state.
 - if the state has never been seen before, 
@@ -63,8 +80,12 @@ that has the highest value.
         let strategiesForState = brain |> Map.toArray |> Array.filter(fun (strategy,value) -> strategy.State = state) 
 
         match strategiesForState |> Array.isEmpty with
-            | true -> randomDecide()
-            | false -> strategiesForState |> Array.maxBy(fun (strategy,value) -> value) |> fun (strategy,value) -> strategy.Action
+            | true -> 
+                printfn "empty"
+                randomDecide()
+            | false ->
+                printfn "!EMPTY" 
+                strategiesForState |> Array.maxBy(fun (strategy,value) -> value) |> fun (strategy,value) -> strategy.Action
         
         //if brain.ContainsKey(state)
         //then brain |> Map.toArray |> Array.maxBy (fun (x:float) -> x.[1])

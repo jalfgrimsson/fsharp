@@ -34,7 +34,7 @@ module Program =
 
             let visible = state.Board |> Brains.visibleBy size state.Creature
             let decision = Brains.decide brain visible
-
+            printfn "%O" brain
             let creature = state.Creature |> move decision
             let board = updateBoard state.Board creature
             let gain = computeGain state.Board creature
