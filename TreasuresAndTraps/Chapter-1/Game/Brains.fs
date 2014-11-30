@@ -65,9 +65,11 @@ Decision from the latest Experience recorded,
         match strategiesForState |> Array.isEmpty with
             | true ->
                 let strategy:Strategy = { State = exp.State; Action = exp.Action }
-                brain.Add (strategy, exp.Reward)
+                brain.Add (strategy, alpha * exp.Reward)
             | false ->
-                brain |> (Map.map (fun strategy value -> updateIfMatch strategy value exp.State exp.Reward))
+                //brain |> (Map.map (fun strategy value -> updateIfMatch strategy value exp.State exp.Reward))
+                let strategy:Strategy = { State = exp.State; Action = exp.Action }
+                brain.Add (strategy, updateFunction 1.0 exp.Reward)
         //        brain |> Map.toArray |> Array.map(fun (strategy,value) -> updateIfStateMatches (strategy,value) exp.State exp.Reward)
         //strategiesForState |> Array.map (fun (strategy,value) -> (strategy,(updateFunction value exp.Reward))
 
@@ -82,7 +84,23 @@ correspond to the current state, pick the strategy
 that has the highest value.
 *)
 
+    
     let decide (brain:Brain) (state:State) =
+        let eval =
+            options
+            |> Array.map (fun alt -> { State = state; Action = alt })
+            |> Array.filter (fun strat -> brain.ContainsKey strat)
+        match eval.Length with
+        | 0 -> randomDecide ()
+        | _ -> 
+            options
+            |> Seq.maxBy (fun alt -> 
+                let strat = { State = state; Action = alt }
+                match brain.TryFind strat with
+                | Some(value) -> value
+                | None -> 0.)
+
+    let decide2 (brain:Brain) (state:State) =
         let strategiesForState = brain |> Map.toArray |> Array.filter(fun (strategy,value) -> strategy.State = state) 
 
         match strategiesForState |> Array.isEmpty with

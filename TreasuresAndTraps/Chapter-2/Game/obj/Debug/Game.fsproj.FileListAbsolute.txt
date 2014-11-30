@@ -6,3 +6,11 @@
 \\psf\Home\Desktop\TreasuresAndTraps\Chapter-2\Game\bin\Debug\FSharp.Core.xml
 \\psf\Home\Desktop\TreasuresAndTraps\Chapter-2\Game\obj\Debug\Game.exe
 \\psf\Home\Desktop\TreasuresAndTraps\Chapter-2\Game\obj\Debug\Game.pdb
+\\psf\Home\Desktop\FSharp\fsharp\TreasuresAndTraps\Chapter-2\Game\bin\Debug\Game.exe.config
+\\psf\Home\Desktop\FSharp\fsharp\TreasuresAndTraps\Chapter-2\Game\bin\Debug\Game.XML
+\\psf\Home\Desktop\FSharp\fsharp\TreasuresAndTraps\Chapter-2\Game\bin\Debug\Game.exe
+\\psf\Home\Desktop\FSharp\fsharp\TreasuresAndTraps\Chapter-2\Game\bin\Debug\Game.pdb
+\\psf\Home\Desktop\FSharp\fsharp\TreasuresAndTraps\Chapter-2\Game\bin\Debug\FSharp.Core.dll
+\\psf\Home\Desktop\FSharp\fsharp\TreasuresAndTraps\Chapter-2\Game\bin\Debug\FSharp.Core.xml
+\\psf\Home\Desktop\FSharp\fsharp\TreasuresAndTraps\Chapter-2\Game\obj\Debug\Game.exe
+\\psf\Home\Desktop\FSharp\fsharp\TreasuresAndTraps\Chapter-2\Game\obj\Debug\Game.pdb
