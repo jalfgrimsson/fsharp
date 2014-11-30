@@ -84,6 +84,10 @@ correspond to the current state, pick the strategy
 that has the highest value.
 *)
 
+    type Decision = { 
+        WasRandom:bool;
+        Action : Act;
+    }
     
     let decide (brain:Brain) (state:State) =
         let eval =
@@ -91,7 +95,8 @@ that has the highest value.
             |> Array.map (fun alt -> { State = state; Action = alt })
             |> Array.filter (fun strat -> brain.ContainsKey strat)
         match eval.Length with
-        | 0 -> randomDecide ()
+        | 0 -> 
+            { WasRandom = true; Action = randomDecide() }
         | _ -> 
             options
             |> Seq.maxBy (fun alt -> 
@@ -99,16 +104,40 @@ that has the highest value.
                 match brain.TryFind strat with
                 | Some(value) -> value
                 | None -> 0.)
+            |> fun act -> { WasRandom = false; Action = act }
+
+    // The above was the reference implementation, below is mine
+    // Why do these work differently?
+    // Function above iterates all action options (left, straight, right) with given state and tries to find strategies containing them in the brain
+    // If not found (no previous experience), value of 0 is assigned
+    // Then the best is chosen
+    // Function below extracts all previous experiences from the brain totally ignoring (State, Action) combinations not found
+    // And chooses the best from them
+    // So if given a brain with only one negative experience (i.e. running into a trap) with value -20
+    // function above will choose either of the other combinations with value 0
+    // while function below will choose the only experience - in this case, the negative one, repeating the bad behaviour.
 
     let decide2 (brain:Brain) (state:State) =
         let strategiesForState = brain |> Map.toArray |> Array.filter(fun (strategy,value) -> strategy.State = state) 
 
         match strategiesForState |> Array.isEmpty with
             | true -> 
-                randomDecide()
+                { WasRandom = true; Action = randomDecide() }
             | false ->
-                strategiesForState |> Array.maxBy(fun (strategy,value) -> value) |> fun (strategy,value) -> strategy.Action
+                strategiesForState |> Array.maxBy(fun (strategy,value) -> value) |> fun (strategy,value) -> { WasRandom = false; Action = strategy.Action }
+    
+    // possible improvement - return randomDecide() if value < 0
+    // it is still worse though, because it might choose the negative valued decision, thus negating the value of previous experiences
         
-        //if brain.ContainsKey(state)
-        //then brain |> Map.toArray |> Array.maxBy (fun (x:float) -> x.[1])
-        //else randomDecide ()
+    let decide3 (brain:Brain) (state:State) =
+        let strategiesForState = brain |> Map.toArray |> Array.filter(fun (strategy,value) -> strategy.State = state) 
+
+        match strategiesForState |> Array.isEmpty with
+            | true -> 
+                { WasRandom = true; Action = randomDecide() }
+            | false ->
+                strategiesForState 
+                    |> Array.maxBy(fun (strategy,value) -> value) 
+                    |> fun (strategy,value) ->
+                           if value > 0.0 then { WasRandom = false; Action = strategy.Action }
+                           else { WasRandom = true; Action = randomDecide() }

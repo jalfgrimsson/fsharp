@@ -33,8 +33,10 @@ module Program =
         let rec loop (state:GameState) (brain:Brain) =
 
             let visible = state.Board |> Brains.visibleBy size state.Creature
-            let decision = Brains.decide brain visible
-            let creature = state.Creature |> move decision
+
+            let decision = Brains.decide3 brain visible
+
+            let creature = state.Creature |> move decision.Action
             let board = updateBoard state.Board creature
             let gain = computeGain state.Board creature
             let score = state.Score + gain
@@ -43,8 +45,19 @@ module Program =
             updateDisplay state updatedState
             let nextVisible = board |> Brains.visibleBy size creature
 
-            let experience = { State = visible; Action = decision; Reward = float gain; NextState = nextVisible }
+            let experience = { State = visible; Action = decision.Action; Reward = float gain; NextState = nextVisible }
             let updatedBrain = Brains.learn brain experience
+
+(*            
+            let alternateDecision = Brains.decide2 brain visible
+            if decision.WasRandom <> alternateDecision.WasRandom then
+                printfn "?"
+            else if (decision.WasRandom = false && decision.Action <> alternateDecision.Action) then
+                    printfn "!"
+                    let dec1 = Brains.decide brain visible
+                    let dec2 = Brains.decide2 brain visible
+                    printfn "Dec1 %O Dec2 %O" dec1 dec2
+*)
 
             Thread.Sleep 50
             let keystruck = Console.KeyAvailable
