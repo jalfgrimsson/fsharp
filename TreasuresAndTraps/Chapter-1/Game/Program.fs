@@ -34,7 +34,6 @@ module Program =
 
             let visible = state.Board |> Brains.visibleBy size state.Creature
             let decision = Brains.decide brain visible
-            printfn "%O" brain
             let creature = state.Creature |> move decision
             let board = updateBoard state.Board creature
             let gain = computeGain state.Board creature
@@ -48,10 +47,17 @@ module Program =
             let updatedBrain = Brains.learn brain experience
 
             Thread.Sleep 50
-
-            loop updatedState updatedBrain
+            let keystruck = Console.KeyAvailable
+            if (keystruck) then
+                Console.Clear()
+                Console.ReadKey() |> ignore
+                printfn "Brain count: %d" updatedBrain.Count
+                printfn "%O" updatedBrain
+            else
+                loop updatedState updatedBrain
 
         let brain = Map.empty
         loop startState brain
 
+        Console.ReadKey() |> ignore
         0 // return an integer exit code

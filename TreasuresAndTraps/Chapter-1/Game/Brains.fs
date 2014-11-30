@@ -50,19 +50,25 @@ Decision from the latest Experience recorded,
     let updateFunction value reward =
         (1.0 - alpha) * value + alpha * reward  
 
+    let updateIfMatch (strategy:Strategy) (value:float) (state:State) (reward:float) =
+        match strategy.State with
+            | state -> updateFunction value reward
+            | _ -> value
+
     let updateIfStateMatches (strategy:Strategy,value:float) (state:State) (reward:float) =
         match strategy.State with
             | state -> (strategy, (updateFunction value reward))
             | _ -> (strategy, (noupdateFunction value))
 
-    let learn (brain:Brain) (exp:Experience) =
+    let learn (brain:Brain) (exp:Experience) : Brain =
         let strategiesForState = brain |> Map.toArray |> Array.filter(fun (strategy,value) -> strategy.State = exp.State)
         match strategiesForState |> Array.isEmpty with
             | true ->
-                let strategy:Strategy = { State = exp.State, Action = exp.Action }
-                Map.add (strategy, exp.Reward)
+                let strategy:Strategy = { State = exp.State; Action = exp.Action }
+                brain.Add (strategy, exp.Reward)
             | false ->
-                brain |> Map.toArray |> Array.map(fun (strategy,value) -> updateIfStateMatches (strategy,value) exp.State exp.Reward) |> Map.ofArray
+                brain |> (Map.map (fun strategy value -> updateIfMatch strategy value exp.State exp.Reward))
+        //        brain |> Map.toArray |> Array.map(fun (strategy,value) -> updateIfStateMatches (strategy,value) exp.State exp.Reward)
         //strategiesForState |> Array.map (fun (strategy,value) -> (strategy,(updateFunction value exp.Reward))
 
 (*
@@ -81,10 +87,8 @@ that has the highest value.
 
         match strategiesForState |> Array.isEmpty with
             | true -> 
-                printfn "empty"
                 randomDecide()
             | false ->
-                printfn "!EMPTY" 
                 strategiesForState |> Array.maxBy(fun (strategy,value) -> value) |> fun (strategy,value) -> strategy.Action
         
         //if brain.ContainsKey(state)
