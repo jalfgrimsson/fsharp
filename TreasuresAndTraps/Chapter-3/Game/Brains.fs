@@ -33,19 +33,23 @@ module Brains =
         | None -> brain.Add (strat, alpha * exp.Reward)
 
     let decide (brain:Brain) (state:State) =
-        let eval =
-            choices
-            |> Array.map (fun alt -> { State = state; Action = alt })
-            |> Array.filter (fun strat -> brain.ContainsKey strat)
-        match eval.Length with
-        | 0 -> randomDecide ()
-        | _ -> 
-            choices
-            |> Seq.maxBy (fun alt -> 
-                let strat = { State = state; Action = alt }
-                match brain.TryFind strat with
-                | Some(value) -> value
-                | None -> 0.)
+        match rng.NextDouble() with
+        | result when result < epsilon -> 
+            randomDecide()
+        | _ ->
+            let eval =
+                choices
+                |> Array.map (fun alt -> { State = state; Action = alt })
+                |> Array.filter (fun strat -> brain.ContainsKey strat)
+            match eval.Length with
+            | 0 -> randomDecide ()
+            | _ -> 
+                choices
+                |> Seq.maxBy (fun alt -> 
+                    let strat = { State = state; Action = alt }
+                    match brain.TryFind strat with
+                    | Some(value) -> value
+                    | None -> 0.)
 
 (*
 Determination of what the creature sees:
